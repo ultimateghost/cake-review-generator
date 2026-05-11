@@ -13,7 +13,7 @@ export default async function handler(req, res) {
       'anthropic-version': '2023-06-01'
     },
     body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-sonnet-4-5',
       max_tokens: 1000,
       system: `You are a warm, friendly reply assistant for Cake o'clock, a boutique fresh cream cake shop in Launceston, Tasmania. Write genuine, human, concise Google review replies (2-5 sentences). Reference specific details from the review. Sign off with "Cake o'clock Team". No corporate language. Occasional emoji OK. Output reply text only.`,
       messages: [{ role: 'user', content: `${stars}-star review: "${review}"` }]
