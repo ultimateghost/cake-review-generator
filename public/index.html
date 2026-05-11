@@ -11,10 +11,13 @@
   .sub { text-align: center; font-size: 11px; color: #B89880; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 24px; }
   .card { background: #FFFCF7; border: 1px solid rgba(201,168,76,0.25); border-radius: 14px; padding: 20px; margin-bottom: 14px; }
   .label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; color: #B89880; margin-bottom: 10px; }
-  .stars { display: flex; gap: 8px; flex-wrap: wrap; }
+  .stars { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
   .star-btn { padding: 8px 14px; border-radius: 20px; border: 1.5px solid rgba(201,168,76,0.25); background: transparent; color: #7A5C46; font-size: 13px; cursor: pointer; }
   .star-btn.active { background: #C9A84C; border-color: #C9A84C; color: white; }
-  textarea { width: 100%; min-height: 120px; border: 1.5px solid rgba(201,168,76,0.25); border-radius: 10px; padding: 12px 14px; font-size: 14px; color: #3D2B1F; background: #FDF8F0; resize: vertical; outline: none; margin-top: 10px; }
+  input, select, textarea { width: 100%; border: 1.5px solid rgba(201,168,76,0.25); border-radius: 10px; padding: 12px 14px; font-size: 14px; color: #3D2B1F; background: #FDF8F0; outline: none; margin-top: 4px; font-family: sans-serif; }
+  textarea { min-height: 120px; resize: vertical; }
+  .row { display: flex; gap: 12px; margin-bottom: 12px; }
+  .row > div { flex: 1; }
   .btn { width: 100%; margin-top: 12px; padding: 15px; background: #3D2B1F; color: #FDF8F0; border: none; border-radius: 10px; font-size: 15px; font-family: Georgia, serif; font-style: italic; cursor: pointer; }
   .btn:disabled { opacity: 0.6; cursor: not-allowed; }
   .result { background: #FFFCF7; border: 1.5px solid #E8D5A3; border-radius: 14px; padding: 20px; margin-bottom: 14px; display: none; }
@@ -41,7 +44,22 @@
     <button class="star-btn" onclick="selectStars(2)">⭐⭐ 2</button>
     <button class="star-btn" onclick="selectStars(1)">⭐ 1</button>
   </div>
-  <div class="label" style="margin-top:16px;">Customer Review</div>
+  <div class="row">
+    <div>
+      <div class="label">Reviewer Name (Optional)</div>
+      <input type="text" id="nameInput" placeholder="e.g. Sarah">
+    </div>
+    <div>
+      <div class="label">Reply Tone</div>
+      <select id="toneInput">
+        <option>Warm & Friendly</option>
+        <option>Professional</option>
+        <option>Apologetic</option>
+        <option>Enthusiastic</option>
+      </select>
+    </div>
+  </div>
+  <div class="label">Customer Review</div>
   <textarea id="reviewInput" placeholder="Paste the customer's review here..."></textarea>
   <div class="error" id="error"></div>
   <button class="btn" id="generateBtn" onclick="generateReply()">✦ Generate Reply</button>
@@ -64,6 +82,8 @@
   }
   async function generateReply() {
     const review = document.getElementById('reviewInput').value.trim();
+    const name = document.getElementById('nameInput').value.trim();
+    const tone = document.getElementById('toneInput').value;
     const errorEl = document.getElementById('error');
     if (!review) { errorEl.textContent = 'Please paste a review first.'; return; }
     if (!selectedStars) { errorEl.textContent = 'Please select a star rating.'; return; }
@@ -76,7 +96,7 @@
       const res = await fetch('/api/reply', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ review, stars: selectedStars })
+        body: JSON.stringify({ review, stars: selectedStars, name, tone })
       });
       const data = await res.json();
       if (data.reply) {
